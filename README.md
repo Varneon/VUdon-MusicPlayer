@@ -1,10 +1,10 @@
 <div>
 
-# [VUdon](https://github.com/Varneon/VUdon) - Repository Template [![GitHub Repo stars](https://img.shields.io/github/stars/Varneon/Repository-Template-VUdon?style=flat&label=Stars)](https://github.com/Varneon/Repository-Template-VUdon/stargazers) [![GitHub all releases](https://img.shields.io/github/downloads/Varneon/Repository-Template-VUdon/total?color=blue&label=Downloads&style=flat)](https://github.com/Varneon/Repository-Template-VUdon/releases) [![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/Varneon/Repository-Template-VUdon?color=blue&label=Release&sort=semver&style=flat)](https://github.com/Varneon/Repository-Template-VUdon/releases/latest)
+# [VUdon](https://github.com/Varneon/VUdon) - Music Player [![GitHub Repo stars](https://img.shields.io/github/stars/Varneon/VUdon-MusicPlayer?style=flat&label=Stars)](https://github.com/Varneon/VUdon-MusicPlayer/stargazers) [![GitHub all releases](https://img.shields.io/github/downloads/Varneon/VUdon-MusicPlayer/total?color=blue&label=Downloads&style=flat)](https://github.com/Varneon/VUdon-MusicPlayer/releases) [![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/Varneon/VUdon-MusicPlayer?color=blue&label=Release&sort=semver&style=flat)](https://github.com/Varneon/VUdon-MusicPlayer/releases/latest)
 
 </div>
 
-Template repository for VUdon packages
+Music player prefab that allows world creators to create playlists for their worlds for everyone to listen to
 
 # Installation
 
