@@ -2,7 +2,8 @@
     "name": "Varneon.VUdon.MusicPlayer.Runtime",
     "references": [
         "UdonSharp.Runtime",
-        "VRC.Udon"
+        "VRC.Udon",
+        "Varneon.VUdon.Logger.Runtime"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

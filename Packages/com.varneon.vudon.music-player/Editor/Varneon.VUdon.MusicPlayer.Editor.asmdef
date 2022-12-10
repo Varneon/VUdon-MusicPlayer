@@ -1,7 +1,8 @@
 {
     "name": "Varneon.VUdon.MusicPlayer.Editor",
     "references": [
-        "Varneon.VUdon.MusicPlayer.Runtime"
+        "Varneon.VUdon.MusicPlayer.Runtime",
+        "UdonSharp.Runtime"
     ],
     "includePlatforms": [
         "Editor"
