@@ -5,7 +5,7 @@ namespace Varneon.VUdon.MusicPlayer.Enums
     public enum AndroidURLResolver
     {
         None,
-        [InspectorName("Jinnai (t-ne.x0.to)")]
+        [InspectorName("Jinnai (nextnex.com)")]
         Jinnai,
         Custom
     }
