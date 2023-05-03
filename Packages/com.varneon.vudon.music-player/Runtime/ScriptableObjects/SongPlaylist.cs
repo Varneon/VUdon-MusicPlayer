@@ -1,5 +1,7 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Varneon.VUdon.MusicPlayer
@@ -22,6 +24,28 @@ namespace Varneon.VUdon.MusicPlayer
         public static SongPlaylistData FromJSON(string json)
         {
             return string.IsNullOrWhiteSpace(json) ? new SongPlaylistData() : JsonConvert.DeserializeObject<SongPlaylistData>(json);
+        }
+
+        public static bool IsJSONValidSongPlaylistData(string json)
+        {
+            if (string.IsNullOrEmpty(json)) { return false; }
+
+            try
+            {
+                JObject root = JObject.Parse(json);
+
+                if (root == null) { return false; }
+
+                HashSet<string> propertyNames = new HashSet<string>(root.Properties().Select(p => p.Name));
+
+                if (typeof(SongPlaylistData).GetFields().Any(f => !propertyNames.Contains(f.Name))) { return false; }
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public string RawJsonData => rawJsonData;
