@@ -3,7 +3,8 @@
     "references": [
         "UdonSharp.Runtime",
         "VRC.Udon",
-        "Varneon.VUdon.Logger.Runtime"
+        "Varneon.VUdon.Logger.Runtime",
+        "Varneon.VUdon.Editors.Runtime"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

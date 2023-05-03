@@ -12,11 +12,11 @@
   "dependencies": {
     "com.vrchat.udonsharp": "1.0.1",
     "com.varneon.vudon.logger": "0.1.0",
-    "com.varneon.neon-inspector": "0.0.1"
+    "com.varneon.vudon.editors": "0.1.0"
   },
   "vpmDependencies": {
     "com.vrchat.udonsharp": "1.x.x",
     "com.varneon.vudon.logger": "0.1.0",
-    "com.varneon.neon-inspector": "0.0.1"
+    "com.varneon.vudon.editors": "0.1.0-alpha.5"
   }
 }
