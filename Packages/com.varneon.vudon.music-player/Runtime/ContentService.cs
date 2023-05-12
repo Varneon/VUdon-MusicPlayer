@@ -1,7 +1,9 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Varneon.VUdon.MusicPlayer.Enums
 {
+    [Obsolete]
     public enum ContentService
     {
         [InspectorName("YouTube")]
