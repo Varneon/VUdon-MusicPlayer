@@ -3,8 +3,11 @@
     "references": [
         "Varneon.VUdon.MusicPlayer.Runtime",
         "UdonSharp.Runtime",
+        "UdonSharp.Editor",
+        "Varneon.VUdon.Editors.Runtime",
         "Varneon.VUdon.Editors.Editor",
-        "Varneon.VUdon.Editors.Runtime"
+        "Varneon.VUdon.Logger.Runtime",
+        "VRC.Udon"
     ],
     "includePlatforms": [
         "Editor"

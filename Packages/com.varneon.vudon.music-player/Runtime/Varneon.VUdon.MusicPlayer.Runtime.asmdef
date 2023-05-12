@@ -4,7 +4,8 @@
         "UdonSharp.Runtime",
         "VRC.Udon",
         "Varneon.VUdon.Logger.Runtime",
-        "Varneon.VUdon.Editors.Runtime"
+        "Varneon.VUdon.Editors.Runtime",
+        "Unity.TextMeshPro"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
