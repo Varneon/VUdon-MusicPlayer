@@ -6,6 +6,8 @@
 
 Upcoming music player prefab in development that will allow world creators to create playlists for their worlds for everyone to listen to
 
+> Follow the development of this prefab on my [Twitter](https://twitter.com/search?q=from%3A%40Varneon%20Music%20Player)
+
 # Installation
 
 > ### Coming Soon™
