@@ -4,7 +4,7 @@
 
 </div>
 
-Music player prefab that allows world creators to create playlists for their worlds for everyone to listen to
+Upcoming music player prefab in development that will allow world creators to create playlists for their worlds for everyone to listen to
 
 # Installation
 
