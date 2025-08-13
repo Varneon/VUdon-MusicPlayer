@@ -26,6 +26,70 @@ namespace Varneon.VUdon.MusicPlayer
             return string.IsNullOrWhiteSpace(json) ? new SongPlaylistData() : JsonConvert.DeserializeObject<SongPlaylistData>(json);
         }
 
+        public static SongPlaylistData FromTSV(string tsv)
+        {
+            string[] rows = tsv.Split(new char[] { '\r', '\n' }, System.StringSplitOptions.RemoveEmptyEntries);
+
+            if(rows.Length == 0) { return new SongPlaylistData(); }
+
+            string[] row1 = rows[0].Split('\t');
+
+            int titleIndex = -1;
+
+            int artistIndex = -1;
+
+            int urlIndex = -1;
+
+            int tagsIndex = -1;
+
+            for(int i = 0; i < row1.Length; i++)
+            {
+                string value = row1[i].ToLower();
+
+                switch (value)
+                {
+                    case "title":
+                        titleIndex = i;
+                        break;
+                    case "artist":
+                        artistIndex = i;
+                        break;
+                    case "url":
+                        urlIndex = i;
+                        break;
+                    case "tags":
+                        tagsIndex = i;
+                        break;
+                }
+            }
+
+            bool hasHeaderRow = titleIndex >= 0 && artistIndex >= 0 && urlIndex >= 0;
+
+            bool hasTags = (hasHeaderRow && tagsIndex > 0) || row1.Length > 3;
+
+            if (!hasHeaderRow)
+            {
+                titleIndex = 0;
+
+                artistIndex = 1;
+
+                urlIndex = 2;
+
+                tagsIndex = 3;
+            }
+
+            List<Song> songs = new List<Song>();
+
+            for(int i = hasHeaderRow ? 1 : 0; i < rows.Length; i++)
+            {
+                string[] row = rows[i].Split(new char[] { '\t' }, System.StringSplitOptions.RemoveEmptyEntries);
+
+                songs.Add(new Song() { Title = row[titleIndex], Artist = row[artistIndex], URL = row[urlIndex], Tags = hasTags ? row[tagsIndex] : string.Empty });
+            }
+
+            return new SongPlaylistData() { Songs = songs };
+        }
+
         public static bool IsJSONValidSongPlaylistData(string json)
         {
             if (string.IsNullOrEmpty(json)) { return false; }
@@ -46,6 +110,17 @@ namespace Varneon.VUdon.MusicPlayer
             {
                 return false;
             }
+        }
+
+        public static bool IsTSVValidSongPlaylistData(string tsv)
+        {
+            string[] rows = tsv.Split(new char[] { '\r', '\n' }, System.StringSplitOptions.RemoveEmptyEntries);
+
+            if (rows.Length == 0) { return false; }
+
+            int rowLength = rows[0].Split('\t').Length;
+
+            return rows.All(r => r.Split('\t').Length == rowLength);
         }
 
         public string RawJsonData => rawJsonData;
