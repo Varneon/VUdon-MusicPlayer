@@ -1,5 +1,6 @@
 {
     "name": "Varneon.VUdon.MusicPlayer.Runtime",
+    "rootNamespace": "Varneon.VUdon.MusicPlayer",
     "references": [
         "UdonSharp.Runtime",
         "VRC.Udon",
