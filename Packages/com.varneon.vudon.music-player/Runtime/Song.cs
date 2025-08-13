@@ -23,16 +23,6 @@
         public string Tags = string.Empty;
 
         /// <summary>
-        /// Rating of the song on scale 1-3 (0 = Not rated)
-        /// </summary>
-        public int Rating = 0;
-
-        /// <summary>
-        /// Is the song allowed to be played on streams and videos
-        /// </summary>
-        public bool CopyrightSafe = false;
-
-        /// <summary>
         /// Is the song only a portion of the video's duration
         /// </summary>
         public bool PartialDuration = false;
