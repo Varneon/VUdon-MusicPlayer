@@ -25,16 +25,16 @@
         /// <summary>
         /// Is the song only a portion of the video's duration
         /// </summary>
-        public bool PartialDuration = false;
+        //public bool PartialDuration = false;
 
         /// <summary>
         /// Start time of the partial song
         /// </summary>
-        public float StartTime = 0f;
+        //public float StartTime = 0f;
 
         /// <summary>
         /// End time of the partial song
         /// </summary>
-        public float EndTime = 0f;
+        //public float EndTime = 0f;
     }
 }
