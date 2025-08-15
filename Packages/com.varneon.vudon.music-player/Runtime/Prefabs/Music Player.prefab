@@ -4931,6 +4931,8 @@ MonoBehaviour:
   playlistsScrollbarHandle: {fileID: 5959510243614843218}
   songsScrollbarHandle: {fileID: 2276176068226734392}
   windowBackground: {fileID: 8938408310471023923}
+  playlistLibraryWindow: {fileID: 5094361640952123817}
+  mainWindow: {fileID: 5094361640976706575}
   panelColorExampleImages:
   - {fileID: 7263965871906118804}
   - {fileID: 4719725141475327918}

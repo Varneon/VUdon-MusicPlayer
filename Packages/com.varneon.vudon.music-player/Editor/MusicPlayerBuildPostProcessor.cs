@@ -2,6 +2,7 @@
 using System.Linq;
 using UdonSharpEditor;
 using UnityEditor.Callbacks;
+using UnityEngine;
 using VRC.SDKBase;
 
 namespace Varneon.VUdon.MusicPlayer.Editor
@@ -77,6 +78,14 @@ namespace Varneon.VUdon.MusicPlayer.Editor
                 musicPlayer.AutoplayPlaylistIndices = autoplayPlaylistIndices.ToArray();
                 musicPlayer.CopyrightFreePlaylistIndices = copyrightFreePlaylistIndices.ToArray();
                 musicPlayer.AutoplayCopyrightFreePlaylistIndices = autoplayCopyrightFreePlaylistIndices.ToArray();
+
+                // If only one playlist is included in build, hide the library window to make more space for song list items
+                if(playlists.Length == 1)
+                {
+                    musicPlayer.playlistLibraryWindow.gameObject.SetActive(false);
+                    musicPlayer.mainWindow.sizeDelta = new Vector2(0f, musicPlayer.mainWindow.sizeDelta.y);
+                    musicPlayer.mainWindow.anchoredPosition = new Vector2(0f, musicPlayer.mainWindow.anchoredPosition.y);
+                }
             }
         }
     }

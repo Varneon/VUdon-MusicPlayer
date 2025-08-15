@@ -153,6 +153,9 @@ namespace Varneon.VUdon.MusicPlayer
         [SerializeField, FieldNullWarning(true), FieldDisable(nameof(unlockReferenceEditing))]
         private Image playlistsScrollbarHandle, songsScrollbarHandle, windowBackground;
 
+        [SerializeField, FieldNullWarning(true), FieldDisable(nameof(unlockReferenceEditing))]
+        internal RectTransform playlistLibraryWindow, mainWindow;
+
 #if UNITY_2020_2_OR_NEWER
         [NonReorderable]
 #endif
