@@ -759,13 +759,6 @@ namespace Varneon.VUdon.MusicPlayer
         /// </summary>
         private void InitializePlaylists()
         {
-            if (PlaylistIndices.Length == 0)
-            {
-                PlaylistIndices = new int[] { 0 };
-
-                PlaylistNames = new string[] { "All Songs" };
-            }
-
             for (int i = 0; i < PlaylistIndices.Length; i++)
             {
                 if (i > 0) { AddNewListItem(playlists, playlistItem); }
