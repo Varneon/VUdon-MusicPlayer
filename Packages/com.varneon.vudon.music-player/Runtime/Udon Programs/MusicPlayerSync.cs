@@ -13,6 +13,9 @@ namespace Varneon.VUdon.MusicPlayer
         internal bool allowOwnershipClaimAtStart;
 
         [SerializeField]
+        internal LogLevel logLevel;
+
+        [SerializeField]
         internal Logger.Abstract.UdonLogger logger;
 
         private VRCPlayerApi localPlayer;
@@ -68,14 +71,14 @@ namespace Varneon.VUdon.MusicPlayer
 
         public override bool OnOwnershipRequest(VRCPlayerApi requestingPlayer, VRCPlayerApi requestedOwner)
         {
-            Log(string.Format("<color=#c0c0c0>[{0}]</color> {1} requested ownership for <color=#c0c0c0>[{2}]<color> {3}", requestingPlayer.playerId, requestingPlayer.displayName, requestedOwner.playerId, requestedOwner.displayName));
+            LogDebug(string.Format("<color=#c0c0c0>[{0}]</color> {1} requested ownership for <color=#c0c0c0>[{2}]<color> {3}", requestingPlayer.playerId, requestingPlayer.displayName, requestedOwner.playerId, requestedOwner.displayName));
 
             return allowOwnershipTransfer;
         }
 
         public override void OnOwnershipTransferred(VRCPlayerApi player)
         {
-            Log(string.Format("Ownership has been transferred to <color=#c0c0c0>[{0}]</color> {1}", player.playerId, player.displayName));
+            LogDebug(string.Format("Ownership has been transferred to <color=#c0c0c0>[{0}]</color> {1}", player.playerId, player.displayName));
 
             isLocalPlayerOwner = player.isLocal;
 
@@ -86,7 +89,7 @@ namespace Varneon.VUdon.MusicPlayer
         {
             if (!isLocalPlayerOwner) { return; }
 
-            Log($"_OnSongSelected({index})");
+            LogDebug($"_OnSongSelected({index})");
 
             syncedActionType = (byte)SyncActionType.SongSelected;
 
@@ -97,7 +100,7 @@ namespace Varneon.VUdon.MusicPlayer
 
         internal void _OnEndSeek(float time, bool playing)
         {
-            Log(string.Concat(nameof(_OnEndSeek), "(", time, ")"));
+            LogDebug(string.Concat(nameof(_OnEndSeek), "(", time, ")"));
 
             if (!isLocalPlayerOwner) { return; }
 
@@ -112,7 +115,7 @@ namespace Varneon.VUdon.MusicPlayer
 
         internal void _OnSongStarted(int index, float time = 0f)
         {
-            Log($"_OnSongStarted({index}, {time})");
+            LogDebug($"_OnSongStarted({index}, {time})");
 
             if (isLocalPlayerOwner)
             {
@@ -136,7 +139,7 @@ namespace Varneon.VUdon.MusicPlayer
 
                         if (isSyncedSongPlaying && (SyncActionType)syncedActionType != SyncActionType.SongStarted)
                         {
-                            Log("_Pause()");
+                            LogDebug("_Pause()");
 
                             musicPlayer._Pause();
 
@@ -154,7 +157,7 @@ namespace Varneon.VUdon.MusicPlayer
 
                         if (isSyncedSongPlaying)
                         {
-                            Log("waitingForSyncedSongToLoad");
+                            LogDebug("waitingForSyncedSongToLoad");
 
                             musicPlayer._SetPlaybackTime(GetPlaybackOffset());
 
@@ -177,7 +180,7 @@ namespace Varneon.VUdon.MusicPlayer
         {
             if (!isLocalPlayerOwner) { return; }
 
-            Log("_OnSongStopped()");
+            LogDebug("_OnSongStopped()");
 
             syncedActionType = (byte)SyncActionType.SongStopped;
 
@@ -188,7 +191,7 @@ namespace Varneon.VUdon.MusicPlayer
 
         public override void OnDeserialization()
         {
-            Log($"OnDeserialization() {lastSyncedActionTimestamp}, {syncedActionTimestamp}");
+            LogDebug($"OnDeserialization() {lastSyncedActionTimestamp}, {syncedActionTimestamp}");
 
             if (lastSyncedActionTimestamp == syncedActionTimestamp) { return; }
 
@@ -200,7 +203,7 @@ namespace Varneon.VUdon.MusicPlayer
             {
                 lastAllowOwnershipTransfer = allowOwnershipTransfer;
 
-                Log($"_SetAllowOwnershipClaims({allowOwnershipTransfer})");
+                LogDebug($"_SetAllowOwnershipClaims({allowOwnershipTransfer})");
 
                 musicPlayer._SetAllowOwnershipClaims(allowOwnershipTransfer);
             }
@@ -209,19 +212,19 @@ namespace Varneon.VUdon.MusicPlayer
             {
                 // If the synced action was song selected, select the song locally and set isSyncedSongPlaying flag to false
                 case SyncActionType.SongSelected:
-                    Log("SyncActionType.SongSelected");
+                    LogDebug("SyncActionType.SongSelected");
                     musicPlayer._SelectSong(syncedSongIndex);
 
                     syncedSongState = SyncedSongState.Loading;
 
                     break;
                 case SyncActionType.SongStarted:
-                    Log("SyncActionType.SongStarted");
+                    LogDebug("SyncActionType.SongStarted");
 
                     // Owner scrubbed the timeline
                     if(syncedSongState == SyncedSongState.Playing)
                     {
-                        Log("Time changed!");
+                        LogDebug("Time changed!");
 
                         musicPlayer._SetPlaybackTime(GetPlaybackOffset());
 
@@ -234,7 +237,7 @@ namespace Varneon.VUdon.MusicPlayer
                     // If the local player is already playing the song, sync the time with the owner
                     else if (syncedSongState == SyncedSongState.WaitingForOwner || syncedSongState == SyncedSongState.Paused)
                     {
-                        Log("isSyncedSongPlaying");
+                        LogDebug("isSyncedSongPlaying");
                         musicPlayer._SetPlaybackTime(GetPlaybackOffset());
 
                         musicPlayer._Play();
@@ -243,12 +246,12 @@ namespace Varneon.VUdon.MusicPlayer
                     }
                     else // If local player hasn't started the song yet, set the flag
                     {
-                        Log("waitingForSyncedSongToLoad = true");
+                        LogDebug("waitingForSyncedSongToLoad = true");
 
                         // If local player hasn't received the last instruction to load the song, load it
                         if (syncedSongState == SyncedSongState.None)
                         {
-                            Log("!isSyncedSongLoading && !isSyncedSongPlaying");
+                            LogDebug("!isSyncedSongLoading && !isSyncedSongPlaying");
                             musicPlayer._SelectSong(syncedSongIndex);
 
                             syncedSongState = SyncedSongState.Loading;
@@ -260,7 +263,7 @@ namespace Varneon.VUdon.MusicPlayer
                     }
                     break;
                 case SyncActionType.SongStopped:
-                    Log("SyncActionType.SongStopped");
+                    LogDebug("SyncActionType.SongStopped");
 
                     musicPlayer._Pause();
 
@@ -273,11 +276,11 @@ namespace Varneon.VUdon.MusicPlayer
 
         internal void _ClaimOwnership()
         {
-            Log("_ClaimOwnership()");
+            LogDebug("_ClaimOwnership()");
 
             if (!isLocalPlayerOwner && allowOwnershipTransfer)
             {
-                Log("Networking.SetOwner(localPlayer, gameObject)");
+                LogDebug("Networking.SetOwner(localPlayer, gameObject)");
                 Networking.SetOwner(localPlayer, gameObject);
             }
         }
@@ -314,8 +317,10 @@ namespace Varneon.VUdon.MusicPlayer
             linked = true;
         }
 
-        private void Log(string message)
+        private void LogDebug(string message)
         {
+            if ((int)logLevel > (int)LogLevel.Debug) { return; }
+
             string logMessage = string.Format("[<color=#ABC>VUdon</color>][<color=#00ffff>MusicPlayerSync</color>]: {0}", message);
 
             Debug.Log(logMessage);
@@ -325,6 +330,8 @@ namespace Varneon.VUdon.MusicPlayer
 
         private void LogError(string message)
         {
+            if ((int)logLevel > (int)LogLevel.Error) { return; }
+
             string logMessage = string.Format("[<color=#ABC>VUdon</color>][<color=#00ffff>MusicPlayer</color>]: {0}", message);
 
             Debug.LogError(logMessage);
@@ -354,7 +361,7 @@ namespace Varneon.VUdon.MusicPlayer
 
             lastSyncedActionTimestamp = syncedActionTimestamp;
 
-            Log($"RequestSerializationWithTimestamp(), {syncedActionTimestamp}");
+            LogDebug($"RequestSerializationWithTimestamp(), {syncedActionTimestamp}");
 
             RequestSerialization();
         }

@@ -176,6 +176,9 @@ namespace Varneon.VUdon.MusicPlayer
 
         [FoldoutHeader("Debug")]
         [SerializeField]
+        internal LogLevel logLevel;
+
+        [SerializeField]
         internal Logger.Abstract.UdonLogger logger;
         #endregion
 
@@ -274,7 +277,7 @@ namespace Varneon.VUdon.MusicPlayer
             get => allowOwnershipClaims;
             set
             {
-                Log($"AllowOwnershipClaims = {value}");
+                LogDebug($"AllowOwnershipClaims = {value}");
 
                 if (allowOwnershipClaims != value)
                 {
@@ -341,7 +344,7 @@ namespace Varneon.VUdon.MusicPlayer
 
                 ownershipLockToggle.SetActive(true);
 
-                Log("Successfully linked to MusicPlayerSync!");
+                LogDebug("Successfully linked to MusicPlayerSync!");
             }
 
             player = mode == MusicPlayerMode.Unity ? (BaseVRCVideoPlayer)GetComponent<VRCUnityVideoPlayer>() : (BaseVRCVideoPlayer)GetComponent<VRCAVProVideoPlayer>();
@@ -592,7 +595,7 @@ namespace Varneon.VUdon.MusicPlayer
         {
             disableCopyrightedAutoplay = !toggleAllowCopyrightedPlaylists.isOn;
 
-            Log($"DisableCopyrightedAutoplay: <color=#4887BF>{disableCopyrightedAutoplay}</color>");
+            LogDebug($"DisableCopyrightedAutoplay: <color=#4887BF>{disableCopyrightedAutoplay}</color>");
         }
 
         public void _TryToRecoverFromError()
@@ -606,7 +609,7 @@ namespace Varneon.VUdon.MusicPlayer
 
         public void _DisableRateLimiting()
         {
-            Log($"<color=#DCDCAA>{nameof(_DisableRateLimiting)}</color>()");
+            LogDebug($"<color=#DCDCAA>{nameof(_DisableRateLimiting)}</color>()");
 
             isRateLimited = false;
 
@@ -634,7 +637,7 @@ namespace Varneon.VUdon.MusicPlayer
 
         public void _ToggleAllowOwnershipClaims()
         {
-            Log("_ToggleAllowOwnershipClaims()");
+            LogDebug("_ToggleAllowOwnershipClaims()");
 
             if (isSynced && isLocalPlayerOwner)
             {
@@ -644,14 +647,14 @@ namespace Varneon.VUdon.MusicPlayer
 
         public void _ClaimOwnership()
         {
-            Log("_ClaimOwnership()");
+            LogDebug("_ClaimOwnership()");
 
             sync._ClaimOwnership();
         }
 
         internal void _SetAllowOwnershipClaims(bool allowClaims)
         {
-            Log($"_SetAllowOwnershipClaims({allowClaims})");
+            LogDebug($"_SetAllowOwnershipClaims({allowClaims})");
 
             allowOwnershipClaims = allowClaims;
 
@@ -941,7 +944,13 @@ namespace Varneon.VUdon.MusicPlayer
 
             SendCustomEventDelayedSeconds(nameof(_DisableRateLimiting), isSynced ? RATE_LIMIT_SECONDS * 2f : RATE_LIMIT_SECONDS);
 
-            Log($"<color=#DCDCAA>{nameof(LoadAndPlaySong)}</color>(<color=#4887BF>int</color> <color=#9CDCFE>index</color>: <color=#B5CEA8>{index}</color>) | <color=#808080><color=#c0c0c0>{Titles[nextSongIndex]}</color> - <color=#c0c0c0>{Artists[nextSongIndex]}</color> (<color=#c0c0c0>{Urls[nextSongIndex]}</color>)</color>");
+            string title = Titles[nextSongIndex];
+
+            string artist = Artists[nextSongIndex];
+
+            Log($"Loading Song: {title} - {artist}");
+
+            LogDebug($"<color=#DCDCAA>{nameof(LoadAndPlaySong)}</color>(<color=#4887BF>int</color> <color=#9CDCFE>index</color>: <color=#B5CEA8>{index}</color>) | <color=#808080><color=#c0c0c0>{title}</color> - <color=#c0c0c0>{artist}</color> (<color=#c0c0c0>{Urls[nextSongIndex]}</color>)</color>");
 
             player.PlayURL(Urls[index]);
         }
@@ -1029,7 +1038,7 @@ namespace Varneon.VUdon.MusicPlayer
         {
             if (playlistIndex < 0) { LogError("Can't load song: Invalid playlist index!"); return; }
 
-            Log($"<color=#DCDCAA>{nameof(LoadAndPlayRandomSongOnList)}</color>(<color=#4887BF>int</color> <color=#9CDCFE>playlistIndex</color>: <color=#B5CEA8>{playlistIndex}</color>)");
+            LogDebug($"<color=#DCDCAA>{nameof(LoadAndPlayRandomSongOnList)}</color>(<color=#4887BF>int</color> <color=#9CDCFE>playlistIndex</color>: <color=#B5CEA8>{playlistIndex}</color>)");
 
             LoadAndPlaySong(UnityEngine.Random.Range(PlaylistIndices[playlistIndex], GetLastPlaylistSongIndex(playlistIndex) + 1));
         }
@@ -1275,11 +1284,26 @@ namespace Varneon.VUdon.MusicPlayer
         }
 
         /// <summary>
+        /// Proxy for printing debug messages in logs
+        /// </summary>
+        /// <param name="text"></param>
+        private void LogDebug(string text)
+        {
+            if ((int)logLevel > (int)LogLevel.Debug) { return; }
+
+            if (logger) { logger.Log($"{LogPrefix} {text}"); }
+
+            Debug.Log($"{LogPrefix} {text}");
+        }
+
+        /// <summary>
         /// Proxy for printing messages in logs
         /// </summary>
         /// <param name="text"></param>
         private void Log(string text)
         {
+            if ((int)logLevel > (int)LogLevel.Info) { return; }
+
             if (logger) { logger.Log($"{LogPrefix} {text}"); }
 
             Debug.Log($"{LogPrefix} {text}");
@@ -1291,6 +1315,8 @@ namespace Varneon.VUdon.MusicPlayer
         /// <param name="text"></param>
         private void LogWarning(string text)
         {
+            if ((int)logLevel > (int)LogLevel.Warning) { return; }
+
             if (logger) { logger.LogWarning($"{LogPrefix} {text}"); }
 
             Debug.LogWarning($"{LogPrefix} {text}");
@@ -1302,6 +1328,8 @@ namespace Varneon.VUdon.MusicPlayer
         /// <param name="text"></param>
         private void LogError(string text)
         {
+            if ((int)logLevel > (int)LogLevel.Error) { return; }
+
             if (logger) { logger.LogError($"{LogPrefix} {text}"); }
 
             Debug.LogError($"{LogPrefix} {text}");
@@ -1316,7 +1344,7 @@ namespace Varneon.VUdon.MusicPlayer
                 sync._OnSongStopped(player.GetTime());
             }
 
-            Log($"<color=#DCDCAA>{nameof(OnVideoEnd)}</color>()");
+            LogDebug($"<color=#DCDCAA>{nameof(OnVideoEnd)}</color>()");
 
             timeProgressBar.fillRect.gameObject.SetActive(false);
 
@@ -1342,7 +1370,7 @@ namespace Varneon.VUdon.MusicPlayer
                 OnVideoReady();
             }
 
-            Log($"<color=#DCDCAA>{nameof(OnVideoStart)}</color>()");
+            LogDebug($"<color=#DCDCAA>{nameof(OnVideoStart)}</color>()");
 
             timeProgressBar.fillRect.gameObject.SetActive(true);
 
@@ -1368,7 +1396,7 @@ namespace Varneon.VUdon.MusicPlayer
 
         public override void OnVideoReady()
         {
-            Log($"<color=#DCDCAA>{nameof(OnVideoReady)}</color>()");
+            LogDebug($"<color=#DCDCAA>{nameof(OnVideoReady)}</color>()");
 
             averageLoadingTime = (averageLoadingTime + loadingTime) / 2f;
 
@@ -1391,7 +1419,7 @@ namespace Varneon.VUdon.MusicPlayer
 
             bool isPlaying = player.IsPlaying;
 
-            Log($"<color=#DCDCAA>{nameof(OnVideoError)}</color> | <color=#4887BF>bool</color> <color=#9CDCFE>isPlaying</color>: <color=#4887BF>{isPlaying}</color>");
+            LogDebug($"<color=#DCDCAA>{nameof(OnVideoError)}</color> | <color=#4887BF>bool</color> <color=#9CDCFE>isPlaying</color>: <color=#4887BF>{isPlaying}</color>");
 
             if (isPlaying) { return; }
 

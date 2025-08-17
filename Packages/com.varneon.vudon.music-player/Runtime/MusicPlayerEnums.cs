@@ -80,4 +80,16 @@ namespace Varneon.VUdon.MusicPlayer.Enums
         /// </summary>
         WaitingForLocal
     }
+
+    /// <summary>
+    /// Severity level of log entries
+    /// </summary>
+    public enum LogLevel
+    {
+        Debug,
+        Info,
+        Warning,
+        Error,
+        Disabled
+    }
 }

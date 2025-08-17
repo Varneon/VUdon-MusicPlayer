@@ -27,6 +27,8 @@ namespace Varneon.VUdon.MusicPlayer.Editor
                     if (musicPlayer.logger)
                     {
                         sync.logger = musicPlayer.logger;
+
+                        sync.logLevel = musicPlayer.logLevel;
                     }
                 }
 
