@@ -9,7 +9,7 @@ namespace Varneon.VUdon.MusicPlayer.Editor
 {
     public static class MusicPlayerBuildPostProcessor
     {
-        [PostProcessScene(-1)]
+        [PostProcessScene(-2)]
         public static void PostProcessMusicPlayers()
         {
             foreach(MusicPlayer musicPlayer in Object.FindObjectsOfType<MusicPlayer>(true))

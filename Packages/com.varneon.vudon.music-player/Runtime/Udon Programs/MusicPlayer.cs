@@ -311,7 +311,12 @@ namespace Varneon.VUdon.MusicPlayer
             normalGlassColors.selectedColor = panelHighlightColor * new Color(0.5f, 0.5f, 0.5f, 0.25f);
 
             songButton.colors = normalGlassColors;
-            lastClickedPlaylistButton.colors = normalGlassColors;
+            
+            // Temporarily apply the style to all playlist buttons until style initialization is moved to build
+            foreach(Button playlistButton in playlistContainer.GetComponentsInChildren<Button>(true))
+            {
+                playlistButton.colors = normalGlassColors;
+            }
 
             panelHighlightColor *= new Color(0.5f, 0.5f, 0.5f, 0.25f);
 
@@ -359,11 +364,6 @@ namespace Varneon.VUdon.MusicPlayer
             textTitle.text = string.Empty;
 
             textArtist.text = string.Empty;
-
-            // Initialize the highlight color on the playlist playing icon
-            playlistItem.transform.GetChild(1).GetComponent<Image>().color = contentHighlightColor;
-
-            InitializePlaylists();
 
             // Wait for playlists to be initialized before setting the color of the first playlist button
             HighlightPlaylistListItem(lastClickedPlaylistButton, true);
@@ -755,19 +755,6 @@ namespace Varneon.VUdon.MusicPlayer
         private void GenerateSyncedPlaybackStateInfo()
         {
             syncedStateInfo.text = string.Format("Owner: {0}\n\nAllow ownership claim: {1}", Networking.GetOwner(gameObject).displayName, AllowOwnershipClaims);
-        }
-
-        /// <summary>
-        /// Initialize the list of playlists when the program starts
-        /// </summary>
-        private void InitializePlaylists()
-        {
-            for (int i = 0; i < PlaylistIndices.Length; i++)
-            {
-                if (i > 0) { AddNewListItem(playlistContainer, playlistItem); }
-
-                playlistContainer.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = PlaylistNames[i];
-            }
         }
 
         /// <summary>
@@ -1503,6 +1490,22 @@ namespace Varneon.VUdon.MusicPlayer
         #region Initialization
 
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
+        /// <summary>
+        /// Initialize the list of playlists in the library window
+        /// </summary>
+        private void InitializePlaylists()
+        {
+            // Initialize the highlight color on the playlist playing icon
+            playlistItem.transform.GetChild(1).GetComponent<Image>().color = Color.HSVToRGB(contentHighlightHue, 1f, 1f); ;
+
+            for (int i = 0; i < PlaylistIndices.Length; i++)
+            {
+                if (i > 0) { AddNewListItem(playlistContainer, playlistItem); }
+
+                playlistContainer.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = PlaylistNames[i];
+            }
+        }
+
         [UsedImplicitly]
         [UnityEditor.Callbacks.PostProcessScene(-1)]
         private static void InitializeOnBuild()
@@ -1545,6 +1548,8 @@ namespace Varneon.VUdon.MusicPlayer
                 {
                     DestroyImmediate(example);
                 }
+
+                player.InitializePlaylists();
             }
         }
 #endif
