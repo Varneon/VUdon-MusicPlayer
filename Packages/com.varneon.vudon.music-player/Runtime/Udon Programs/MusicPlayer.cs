@@ -9,6 +9,7 @@ using System.Linq;
 using TMPro;
 using UdonSharp;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Varneon.VUdon.Editors;
 using Varneon.VUdon.MusicPlayer.Enums;
@@ -126,11 +127,13 @@ namespace Varneon.VUdon.MusicPlayer
         [SerializeField, FieldNullWarning(true), FieldDisable(nameof(unlockReferenceEditing))]
         internal RectTransform windowRoot;
 
+        [FormerlySerializedAs("playlists")]
         [SerializeField, FieldNullWarning(true), FieldDisable(nameof(unlockReferenceEditing))]
-        private RectTransform playlists;
+        private RectTransform playlistContainer;
 
+        [FormerlySerializedAs("songs")]
         [SerializeField, FieldNullWarning(true), FieldDisable(nameof(unlockReferenceEditing))]
-        private RectTransform songs;
+        private RectTransform songContainer;
 
         [SerializeField, FieldNullWarning(true), FieldDisable(nameof(unlockReferenceEditing))]
         private GameObject playlistItem, songItem, errorPrompt, syncedPlaybackOverlay, ownershipLockToggle, ownershipLockedIcon, ownershipUnlockedIcon;
@@ -293,7 +296,7 @@ namespace Varneon.VUdon.MusicPlayer
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "UNT0026:GetComponent always allocates", Justification = "Method is not exposed to Udon")]
         private void Start()
         {
-            lastClickedPlaylistButton = playlists.GetComponentInChildren<Button>();
+            lastClickedPlaylistButton = playlistContainer.GetComponentInChildren<Button>();
 
             contentHighlightColor = Color.HSVToRGB(contentHighlightHue, 1f, 1f);
 
@@ -455,7 +458,7 @@ namespace Varneon.VUdon.MusicPlayer
                 HighlightPlaylistListItem(lastClickedPlaylistButton, false);
             }
 
-            selectedPlaylist = GetPressedButtonIndex(playlists, out lastClickedPlaylistButton);
+            selectedPlaylist = GetPressedButtonIndex(playlistContainer, out lastClickedPlaylistButton);
 
             HighlightPlaylistListItem(lastClickedPlaylistButton, true);
 
@@ -474,7 +477,7 @@ namespace Varneon.VUdon.MusicPlayer
 
         public void _SelectSong()
         {
-            int songListIndex = GetPressedButtonIndex(songs, out Button button);
+            int songListIndex = GetPressedButtonIndex(songContainer, out Button button);
 
             if (loading || songListIndex < 0 || isRateLimited) { return; }
 
@@ -761,9 +764,9 @@ namespace Varneon.VUdon.MusicPlayer
         {
             for (int i = 0; i < PlaylistIndices.Length; i++)
             {
-                if (i > 0) { AddNewListItem(playlists, playlistItem); }
+                if (i > 0) { AddNewListItem(playlistContainer, playlistItem); }
 
-                playlists.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = PlaylistNames[i];
+                playlistContainer.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = PlaylistNames[i];
             }
         }
 
@@ -793,7 +796,7 @@ namespace Varneon.VUdon.MusicPlayer
 
             int songCount = playlistEndIndex - playlistStartIndex;
 
-            int itemCount = songs.childCount;
+            int itemCount = songContainer.childCount;
 
             for (int i = 0; i < Mathf.Max(songCount, itemCount); i++)
             {
@@ -801,15 +804,15 @@ namespace Varneon.VUdon.MusicPlayer
 
                 if (i >= itemCount)
                 {
-                    AddNewListItem(songs, songItem);
+                    AddNewListItem(songContainer, songItem);
                 }
                 else if (i >= songCount)
                 {
-                    Destroy(songs.GetChild(i).gameObject);
+                    Destroy(songContainer.GetChild(i).gameObject);
                     continue;
                 }
 
-                Transform panel = songs.GetChild(i);
+                Transform panel = songContainer.GetChild(i);
 
                 string[] content = new string[] { (i + 1).ToString(), Titles[songIndex], Artists[songIndex], Tags[songIndex] };
 
@@ -1056,7 +1059,7 @@ namespace Varneon.VUdon.MusicPlayer
             {
                 int songListIndex = currentSongIndex - PlaylistIndices[currentSongPlaylistIndex];
 
-                currentSongListItem = songs.GetChild(songListIndex);
+                currentSongListItem = songContainer.GetChild(songListIndex);
 
                 if (player.IsPlaying && currentSongIndex == nextSongIndex)
                 {
@@ -1070,7 +1073,7 @@ namespace Varneon.VUdon.MusicPlayer
             {
                 int songListIndex = nextSongIndex - PlaylistIndices[nextSongPlaylistIndex];
 
-                nextSongListItem = songs.GetChild(songListIndex);
+                nextSongListItem = songContainer.GetChild(songListIndex);
 
                 loadingSlider = nextSongListItem.GetComponentInChildren<Slider>(true);
 
@@ -1084,8 +1087,8 @@ namespace Varneon.VUdon.MusicPlayer
         /// <param name="enabled"></param>
         private void UpdatePlayingPlaylistIcon(bool enabled)
         {
-            if (currentSongPlaylistIndex >= 0 && currentSongPlaylistIndex != nextSongPlaylistIndex) { playlists.GetChild(currentSongPlaylistIndex).GetChild(1).gameObject.SetActive(false); }
-            playlists.GetChild(nextSongPlaylistIndex).GetChild(1).gameObject.SetActive(enabled);
+            if (currentSongPlaylistIndex >= 0 && currentSongPlaylistIndex != nextSongPlaylistIndex) { playlistContainer.GetChild(currentSongPlaylistIndex).GetChild(1).gameObject.SetActive(false); }
+            playlistContainer.GetChild(nextSongPlaylistIndex).GetChild(1).gameObject.SetActive(enabled);
         }
 
         private void HighlightPlaylistListItem(Button button, bool highlighted)
