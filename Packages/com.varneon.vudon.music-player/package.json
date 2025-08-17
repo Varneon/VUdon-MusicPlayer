@@ -2,8 +2,8 @@
   "name": "com.varneon.vudon.music-player",
   "displayName": "VUdon - Music Player",
   "version": "0.0.1",
-  "unity": "2019.4",
-  "unityRelease": "29f1",
+  "unity": "2022.3",
+  "unityRelease": "22f1",
   "description": "Music player prefab that allows world creators to create playlists for their worlds for everyone to listen to",
   "author": {
     "name": "Varneon",
