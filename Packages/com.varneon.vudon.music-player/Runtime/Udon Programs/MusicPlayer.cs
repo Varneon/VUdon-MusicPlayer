@@ -1507,11 +1507,7 @@ namespace Varneon.VUdon.MusicPlayer
         [UnityEditor.Callbacks.PostProcessScene(-1)]
         private static void InitializeOnBuild()
         {
-            GameObject[] sceneRoots = UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects();
-
-            IEnumerable<MusicPlayer> musicPlayers = sceneRoots.SelectMany(r => r.GetComponentsInChildren<MusicPlayer>());
-
-            foreach (MusicPlayer player in musicPlayers)
+            foreach (MusicPlayer player in FindObjectsOfType<MusicPlayer>(true))
             {
                 switch (player.mode)
                 {

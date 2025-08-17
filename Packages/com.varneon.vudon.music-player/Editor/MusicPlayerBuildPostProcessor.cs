@@ -12,9 +12,7 @@ namespace Varneon.VUdon.MusicPlayer.Editor
         [PostProcessScene(-1)]
         public static void PostProcessMusicPlayers()
         {
-            MusicPlayer[] musicPlayers = UnityEngine.Object.FindObjectsOfType<MusicPlayer>();
-
-            foreach(MusicPlayer musicPlayer in musicPlayers)
+            foreach(MusicPlayer musicPlayer in Object.FindObjectsOfType<MusicPlayer>(true))
             {
                 if (musicPlayer.synced)
                 {
