@@ -223,6 +223,18 @@ namespace Varneon.VUdon.MusicPlayer
         [SerializeField, HideInInspector]
         internal int[] AutoplayCopyrightFreePlaylistIndices = new int[0];
 
+        [SerializeField, HideInInspector]
+        private Image[] volumeIconImages;
+
+        [SerializeField, HideInInspector]
+        private Button lastClickedPlaylistButton;
+
+        [SerializeField, HideInInspector]
+        private Color contentHighlightColor;
+
+        [SerializeField, HideInInspector]
+        private ColorBlock normalGlassColors, highlightedGlassColors;
+
         private int selectedPlaylist;
 
         private int playlistStartIndex, playlistEndIndex;
@@ -240,8 +252,6 @@ namespace Varneon.VUdon.MusicPlayer
         private float songDuration;
 
         private Transform nextSongListItem, currentSongListItem;
-
-        private Image[] volumeIconImages;
 
         private float originalVolume;
 
@@ -264,12 +274,6 @@ namespace Varneon.VUdon.MusicPlayer
         private bool isLocalPlayerOwner;
 
         private bool allowOwnershipClaims;
-
-        private Button lastClickedPlaylistButton;
-
-        private Color contentHighlightColor;
-
-        private ColorBlock normalGlassColors, highlightedGlassColors;
 
         private const float RATE_LIMIT_SECONDS = 5f;
         #endregion
@@ -296,52 +300,6 @@ namespace Varneon.VUdon.MusicPlayer
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "UNT0026:GetComponent always allocates", Justification = "Method is not exposed to Udon")]
         private void Start()
         {
-            lastClickedPlaylistButton = playlistContainer.GetComponentInChildren<Button>();
-
-            contentHighlightColor = Color.HSVToRGB(contentHighlightHue, 1f, 1f);
-
-            Color panelHighlightColor = Color.HSVToRGB(panelHighlightHue, 0.5f, 1f);
-
-            Button songButton = songItem.GetComponent<Button>();
-            songButton.GetComponentInChildren<Slider>(true).fillRect.GetComponent<Image>().color = contentHighlightColor * new Color(1f, 1f, 1f, 0.25f);
-
-            normalGlassColors = songButton.colors;
-            normalGlassColors.highlightedColor = panelHighlightColor * new Color(0.25f, 0.25f, 0.25f, 0.5f);
-            normalGlassColors.pressedColor = panelHighlightColor * new Color(0.5f, 0.5f, 0.5f, 0.5f);
-            normalGlassColors.selectedColor = panelHighlightColor * new Color(0.5f, 0.5f, 0.5f, 0.25f);
-
-            songButton.colors = normalGlassColors;
-            
-            // Temporarily apply the style to all playlist buttons until style initialization is moved to build
-            foreach(Button playlistButton in playlistContainer.GetComponentsInChildren<Button>(true))
-            {
-                playlistButton.colors = normalGlassColors;
-            }
-
-            panelHighlightColor *= new Color(0.5f, 0.5f, 0.5f, 0.25f);
-
-            highlightedGlassColors = normalGlassColors;
-            highlightedGlassColors.normalColor = panelHighlightColor;
-            highlightedGlassColors.highlightedColor = panelHighlightColor;
-            highlightedGlassColors.pressedColor = panelHighlightColor;
-            highlightedGlassColors.selectedColor = panelHighlightColor;
-
-            ColorBlock sliderColorBlock = volumeSlider.colors;
-            sliderColorBlock.highlightedColor = contentHighlightColor;
-            sliderColorBlock.pressedColor = contentHighlightColor;
-
-            timeProgressBar.colors = sliderColorBlock;
-            volumeSlider.colors = sliderColorBlock;
-            remoteVolumeSlider.colors = sliderColorBlock;
-
-            ownershipUnlockedIcon.GetComponent<Image>().color = contentHighlightColor;
-
-            Button songPlayingButton = songItem.transform.GetChild(5).GetComponent<Button>();
-
-            ColorBlock songPlayingButtonColorBlock = songPlayingButton.colors;
-            songPlayingButtonColorBlock.disabledColor = contentHighlightColor;
-            songPlayingButton.colors = songPlayingButtonColorBlock;
-
             sync = GetComponent<MusicPlayerSync>();
 
             if (sync != null)
@@ -357,13 +315,7 @@ namespace Varneon.VUdon.MusicPlayer
 
             player = mode == MusicPlayerMode.Unity ? (BaseVRCVideoPlayer)GetComponent<VRCUnityVideoPlayer>() : (BaseVRCVideoPlayer)GetComponent<VRCAVProVideoPlayer>();
 
-            volumeIconImages = volumeIconsRoot.GetComponentsInChildren<Image>(true);
-
             toggleAllowCopyrightedPlaylists.isOn = !disableCopyrightedAutoplay;
-
-            textTitle.text = string.Empty;
-
-            textArtist.text = string.Empty;
 
             // Wait for playlists to be initialized before setting the color of the first playlist button
             HighlightPlaylistListItem(lastClickedPlaylistButton, true);
@@ -1490,11 +1442,56 @@ namespace Varneon.VUdon.MusicPlayer
         #region Initialization
 
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
-        /// <summary>
-        /// Initialize the list of playlists in the library window
-        /// </summary>
-        private void InitializePlaylists()
+        private void Initialize()
         {
+            // Cache elements
+            lastClickedPlaylistButton = playlistContainer.GetComponentInChildren<Button>();
+            volumeIconImages = volumeIconsRoot.GetComponentsInChildren<Image>(true);
+
+            // Reset content
+            textTitle.text = string.Empty;
+            textArtist.text = string.Empty;
+
+            contentHighlightColor = Color.HSVToRGB(contentHighlightHue, 1f, 1f);
+
+            Color panelHighlightColor = Color.HSVToRGB(panelHighlightHue, 0.5f, 1f);
+
+            Button songButton = songItem.GetComponent<Button>();
+            songButton.GetComponentInChildren<Slider>(true).fillRect.GetComponent<Image>().color = contentHighlightColor * new Color(1f, 1f, 1f, 0.25f);
+
+            normalGlassColors = songButton.colors;
+            normalGlassColors.highlightedColor = panelHighlightColor * new Color(0.25f, 0.25f, 0.25f, 0.5f);
+            normalGlassColors.pressedColor = panelHighlightColor * new Color(0.5f, 0.5f, 0.5f, 0.5f);
+            normalGlassColors.selectedColor = panelHighlightColor * new Color(0.5f, 0.5f, 0.5f, 0.25f);
+
+            songButton.colors = normalGlassColors;
+
+            lastClickedPlaylistButton.colors = normalGlassColors;
+
+            panelHighlightColor *= new Color(0.5f, 0.5f, 0.5f, 0.25f);
+
+            highlightedGlassColors = normalGlassColors;
+            highlightedGlassColors.normalColor = panelHighlightColor;
+            highlightedGlassColors.highlightedColor = panelHighlightColor;
+            highlightedGlassColors.pressedColor = panelHighlightColor;
+            highlightedGlassColors.selectedColor = panelHighlightColor;
+
+            ColorBlock sliderColorBlock = volumeSlider.colors;
+            sliderColorBlock.highlightedColor = contentHighlightColor;
+            sliderColorBlock.pressedColor = contentHighlightColor;
+
+            timeProgressBar.colors = sliderColorBlock;
+            volumeSlider.colors = sliderColorBlock;
+            remoteVolumeSlider.colors = sliderColorBlock;
+
+            ownershipUnlockedIcon.GetComponent<Image>().color = contentHighlightColor;
+
+            Button songPlayingButton = songItem.transform.GetChild(5).GetComponent<Button>();
+
+            ColorBlock songPlayingButtonColorBlock = songPlayingButton.colors;
+            songPlayingButtonColorBlock.disabledColor = contentHighlightColor;
+            songPlayingButton.colors = songPlayingButtonColorBlock;
+
             // Initialize the highlight color on the playlist playing icon
             playlistItem.transform.GetChild(1).GetComponent<Image>().color = Color.HSVToRGB(contentHighlightHue, 1f, 1f); ;
 
@@ -1549,7 +1546,7 @@ namespace Varneon.VUdon.MusicPlayer
                     DestroyImmediate(example);
                 }
 
-                player.InitializePlaylists();
+                player.Initialize();
             }
         }
 #endif
