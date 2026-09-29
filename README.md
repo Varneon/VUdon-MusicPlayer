@@ -4,23 +4,43 @@
 
 </div>
 
-Upcoming music player prefab in development that will allow world creators to create playlists for their worlds for everyone to listen to
+A music player prefab that allows world creators to easily create playlists of media URLs for their worlds that everyone can listen to.
 
 ![VRChat_uOYCXqYUyT_Low](https://github.com/user-attachments/assets/fe64e01f-eaf9-4ef2-879d-e5b2a8d085a9)
 
-> [!NOTE]
-> Follow the development of this prefab on my [Twitter](https://twitter.com/search?q=from%3A%40Varneon%20Music%20Player)
+## Features
+- A static set of playlists containing URLs to videos that can be played in world
+- Local or synchronized playback
+- Shuffle within playlist or all
+- Loop playlist or single song
+- Disable automatic playback of copyrighted playlists
+- Interface color customization
+- Multi-speaker support via AVPro
+- JSON + TSV Import/Export
 
-# Installation
+> [!TIP]
+> It is highly recommended to maintain a local data set of playlists outside of the Unity Editor, I personally recommend LibreOffice Calc, since you can easily copy all songs from a spreadsheet into your clipboard and paste them into a playlist in Unity Editor
 
-> ### Coming Soon™
+## Installation
+
+### Dependencies - `2`
+* [VUdon Editors](https://github.com/Varneon/VUdon-Editors) *(Makes the prefab inspector more user-friendly)*
+* [VUdon Logger](https://github.com/Varneon/VUdon-Logger) *(Helps with troubleshooting by proxying logs into an in-world console)*
+
+### A) Import with [VRChat Creator Companion](https://vcc.docs.vrchat.com/vpm/)
+* https://vpm.varneon.com/ *(Dependencies will be included in the repository lists)*
+
+### B) Import from [Unitypackage](https://docs.unity3d.com/2022.3/Documentation/Manual/AssetPackagesImport.html)
+1. Download and import [dependencies](https://github.com/Varneon/VUdon-MusicPlayer/README.md#dependencies---2) from the respective repositories with their specified installation instructions
+2. Download latest `com.varneon.vudon.music-player.unitypackage` from [here](https://github.com/Varneon/VUdon-MusicPlayer/releases/latest)
+3. Import the downloaded .unitypackage into your Unity project
 
 <div align="center">
 
 ## Developed by Varneon with :hearts:
 
-[![Twitter Follow](https://img.shields.io/static/v1?style=for-the-badge&label=@Varneon&message=7.9K&color=1b9df0&logo=x)](https://twitter.com/Varneon)
-[![YouTube Channel Subscribers](https://img.shields.io/youtube/channel/subscribers/UCKTxeXy7gyaxr-YA9qGWOYg?color=%23FF0000&label=Varneon&logo=YouTube&style=for-the-badge)](https://www.youtube.com/Varneon)
+[![Twitter Follow](https://img.shields.io/static/v1?style=for-the-badge&label=@Varneon&message=8.3K&color=1b9df0&logo=x)](https://x.com/Varneon)
+[![YouTube Channel Subscribers](https://img.shields.io/static/v1?style=for-the-badge&label=@Varneon&message=1.4K&color=%23FF0000&logo=YouTube)](https://www.youtube.com/Varneon)
 [![GitHub followers](https://img.shields.io/github/followers/Varneon?color=%23303030&label=Varneon&logo=GitHub&style=for-the-badge)](https://github.com/Varneon)
 
 </div>
