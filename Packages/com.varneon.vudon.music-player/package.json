@@ -1,7 +1,7 @@
 {
   "name": "com.varneon.vudon.music-player",
   "displayName": "VUdon - Music Player",
-  "version": "0.0.1",
+  "version": "0.2.0-alpha.1",
   "unity": "2022.3",
   "unityRelease": "22f1",
   "description": "Music player prefab that allows world creators to create playlists for their worlds for everyone to listen to",
@@ -10,13 +10,13 @@
     "url": "https://github.com/Varneon"
   },
   "dependencies": {
-    "com.vrchat.udonsharp": "1.0.1",
-    "com.varneon.vudon.logger": "0.1.0",
+    "com.vrchat.worlds": "3.8.1",
+    "com.varneon.vudon.logger": "0.3.0",
     "com.varneon.vudon.editors": "0.1.0"
   },
   "vpmDependencies": {
-    "com.vrchat.udonsharp": "1.x.x",
-    "com.varneon.vudon.logger": "0.1.0",
-    "com.varneon.vudon.editors": "0.1.0-alpha.5"
+    "com.vrchat.worlds": ">=3.8.1 <4.0.0",
+    "com.varneon.vudon.logger": ">=0.3.0",
+    "com.varneon.vudon.editors": ">=0.1.0-alpha.7"
   }
 }
