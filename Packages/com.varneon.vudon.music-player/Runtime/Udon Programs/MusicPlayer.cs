@@ -105,6 +105,15 @@ namespace Varneon.VUdon.MusicPlayer
         [Tooltip("Only allow player to automatically play the first playlist in the library without user input")]
         private bool onlyFirstPlaylistOnStart;
 
+        [SerializeField]
+        [Tooltip("Should a custom column be displayed alongside Title and Artist columns")]
+        internal bool showCustomDataColumn;
+
+        [SerializeField]
+        [FieldDisable(nameof(showCustomDataColumn))]
+        [Tooltip("Name of the custom data column.\n\nExamples:\nYEAR - Indicate the year when the song was released\nRELEASED - Display an accurate date when the song was released, e.g. 'Sep 29, 2026'")]
+        internal string customDataColumnName = "YEAR";
+
         /// <summary>
         /// Audio source for Unity video player
         /// </summary>
@@ -120,8 +129,11 @@ namespace Varneon.VUdon.MusicPlayer
         [SerializeField, HideInInspector]
         private bool unlockReferenceEditing;
 
-        [ContextMenu("Unlock Reference Editing")]
+        [ContextMenu("Reference Editing/Unlock")]
         private void UnlockReferenceEditing() { unlockReferenceEditing = true; }
+
+        [ContextMenu("Reference Editing/Lock")]
+        private void LockReferenceEditing() { unlockReferenceEditing = false; }
 
         [FoldoutHeader("References", "Do not edit unless you know what you're doing")]
         [SerializeField, FieldNullWarning(true), FieldDisable(nameof(unlockReferenceEditing))]
@@ -158,6 +170,12 @@ namespace Varneon.VUdon.MusicPlayer
 
         [SerializeField, FieldNullWarning(true), FieldDisable(nameof(unlockReferenceEditing))]
         internal RectTransform playlistLibraryWindow, mainWindow;
+
+        [SerializeField, FieldNullWarning(true), FieldDisable(nameof(unlockReferenceEditing))]
+        internal TextMeshProUGUI titleColumnHeader, artistColumnHeader, customDataColumnHeader;
+
+        [SerializeField, FieldNullWarning(true), FieldDisable(nameof(unlockReferenceEditing))]
+        internal TextMeshProUGUI itemTitleText, itemArtistText, itemCustomDataText;
 
 #if UNITY_2020_2_OR_NEWER
         [NonReorderable]

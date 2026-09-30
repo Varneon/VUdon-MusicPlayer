@@ -18,9 +18,12 @@
         public string URL = string.Empty;
 
         /// <summary>
-        /// Tags of the song
+        /// Custom data associated with the song, e.g. a release date: 'Sep 29, 2026'
         /// </summary>
-        public string Tags = string.Empty;
+        /// <remarks>
+        /// The world author chooses whether to utilize this or not, and what data to use the feature for
+        /// </remarks>
+        public string CustomData = string.Empty;
 
         /// <summary>
         /// Is the song only a portion of the video's duration

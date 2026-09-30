@@ -30,7 +30,27 @@ namespace Varneon.VUdon.MusicPlayer.Editor
                     }
                 }
 
-                if(!musicPlayer.TryGetComponent(out MusicPlayerDataStorage playlistStorage)) { continue; }
+                if (musicPlayer.showCustomDataColumn)
+                {
+                    musicPlayer.customDataColumnHeader.text = musicPlayer.customDataColumnName.ToUpper();
+                }
+                else
+                {
+                    // Disable the custom data column on both the header and item sample
+                    musicPlayer.customDataColumnHeader.gameObject.SetActive(false);
+                    musicPlayer.itemCustomDataText.gameObject.SetActive(false);
+
+                    // Adjust both Title and Artist columns to take up half of the width
+                    musicPlayer.titleColumnHeader.rectTransform.anchorMax = new Vector2(0.5f, 1f);
+                    musicPlayer.artistColumnHeader.rectTransform.anchorMin = new Vector2(0.5f, 0f);
+                    musicPlayer.artistColumnHeader.rectTransform.anchorMax = new Vector2(1f, 1f);
+
+                    musicPlayer.itemTitleText.rectTransform.anchorMax = new Vector2(0.5f, 1f);
+                    musicPlayer.itemArtistText.rectTransform.anchorMin = new Vector2(0.5f, 0f);
+                    musicPlayer.itemArtistText.rectTransform.anchorMax = new Vector2(1f, 1f);
+                }
+
+                if (!musicPlayer.TryGetComponent(out MusicPlayerDataStorage playlistStorage)) { continue; }
 
                 SongPlaylist.SongPlaylistData[] playlists = playlistStorage.Playlists.Select(p => p.Data).ToArray();
 
@@ -69,7 +89,7 @@ namespace Varneon.VUdon.MusicPlayer.Editor
 
                 musicPlayer.Titles = allSongs.Select(s => s.Title).ToArray();
                 musicPlayer.Artists = allSongs.Select(s => s.Artist).ToArray();
-                musicPlayer.Tags = allSongs.Select(s => s.Tags).ToArray();
+                musicPlayer.Tags = allSongs.Select(s => s.CustomData).ToArray();
 
                 musicPlayer.PlaylistIndices = playlistIndices.ToArray();
                 musicPlayer.PlaylistNames = playlistNames.ToArray();

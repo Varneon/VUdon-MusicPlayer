@@ -40,11 +40,13 @@ namespace Varneon.VUdon.MusicPlayer
 
             int urlIndex = -1;
 
-            int tagsIndex = -1;
+            int customDataIndex = -1;
 
-            for(int i = 0; i < row1.Length; i++)
+            int columnCount = row1.Length;
+
+            for(int i = 0; i < columnCount; i++)
             {
-                string value = row1[i].ToLower();
+                string value = row1[i].ToLower().Replace(" ", string.Empty);
 
                 switch (value)
                 {
@@ -57,15 +59,19 @@ namespace Varneon.VUdon.MusicPlayer
                     case "url":
                         urlIndex = i;
                         break;
-                    case "tags":
-                        tagsIndex = i;
+                    case "data":
+                    case "customdata":
+                    case "year":
+                    case "released":
+                    case "releaseddate":
+                    case "releaseyear":
+                        customDataIndex = i;
                         break;
                 }
             }
 
+            // We can assume that the data has a header row if "title", "artist" and "url" cells were found
             bool hasHeaderRow = titleIndex >= 0 && artistIndex >= 0 && urlIndex >= 0;
-
-            bool hasTags = (hasHeaderRow && tagsIndex > 0) || row1.Length > 3;
 
             if (!hasHeaderRow)
             {
@@ -75,7 +81,7 @@ namespace Varneon.VUdon.MusicPlayer
 
                 urlIndex = 2;
 
-                tagsIndex = 3;
+                customDataIndex = 3;
             }
 
             List<Song> songs = new List<Song>();
@@ -84,7 +90,10 @@ namespace Varneon.VUdon.MusicPlayer
             {
                 string[] row = rows[i].Split(new char[] { '\t' }, System.StringSplitOptions.RemoveEmptyEntries);
 
-                songs.Add(new Song() { Title = row[titleIndex], Artist = row[artistIndex], URL = row[urlIndex], Tags = hasTags ? row[tagsIndex] : string.Empty });
+                // Only assume custom data to exist if there are more than 3 columns
+                bool hasCustomData = row.Length > 3 && customDataIndex >= 0;
+
+                songs.Add(new Song() { Title = row[titleIndex], Artist = row[artistIndex], URL = row[urlIndex], CustomData = hasCustomData ? row[customDataIndex] : string.Empty });
             }
 
             return new SongPlaylistData() { Songs = songs };
