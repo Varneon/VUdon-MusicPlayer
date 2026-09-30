@@ -190,6 +190,12 @@ namespace Varneon.VUdon.MusicPlayer
         [NonReorderable]
 #endif
         [SerializeField, FieldNullWarning(true), FieldDisable(nameof(unlockReferenceEditing))]
+        private Image[] contentColorExampleIcons;
+
+#if UNITY_2020_2_OR_NEWER
+        [NonReorderable]
+#endif
+        [SerializeField, FieldNullWarning(true), FieldDisable(nameof(unlockReferenceEditing))]
         internal GameObject[] examplesToDestroyOnBuild;
 
         [FoldoutHeader("Debug")]
@@ -1407,6 +1413,11 @@ namespace Varneon.VUdon.MusicPlayer
             foreach(TextMeshProUGUI text in contentColorExampleTexts)
             {
                 text.color = contentColor;
+            }
+
+            foreach (Image image in contentColorExampleIcons)
+            {
+                image.color = contentColor;
             }
 
             Color panelColor = Color.HSVToRGB(panelHighlightHue, 0.5f, 0.5f);
