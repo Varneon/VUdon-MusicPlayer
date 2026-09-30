@@ -2,10 +2,7 @@
 #pragma warning disable IDE1006 // VRChat public method network execution prevention using underscore
 #pragma warning disable 649
 
-using JetBrains.Annotations;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using TMPro;
 using UdonSharp;
 using UnityEngine;
@@ -242,6 +239,12 @@ namespace Varneon.VUdon.MusicPlayer
         internal int[] AutoplayCopyrightFreePlaylistIndices = new int[0];
 
         [SerializeField, HideInInspector]
+        internal int MaxPlaylistLength;
+
+        [SerializeField, HideInInspector]
+        internal int FirstPlaylistLength;
+
+        [SerializeField, HideInInspector]
         private Image[] volumeIconImages;
 
         [SerializeField, HideInInspector]
@@ -256,6 +259,8 @@ namespace Varneon.VUdon.MusicPlayer
         private int selectedPlaylist;
 
         private int playlistStartIndex, playlistEndIndex;
+
+        private int playlistSongCount, lastPlaylistSongCount;
 
         private int currentSongIndex = -1, currentSongPlaylistIndex = -1;
 
@@ -337,6 +342,9 @@ namespace Varneon.VUdon.MusicPlayer
 
             // Wait for playlists to be initialized before setting the color of the first playlist button
             HighlightPlaylistListItem(lastClickedPlaylistButton, true);
+
+            // Make sure loading the song list doesn't do unnecessary work on start since the items are already active
+            playlistSongCount = FirstPlaylistLength;
 
             UpdateSongList();
 
@@ -681,13 +689,23 @@ namespace Varneon.VUdon.MusicPlayer
         }
 
         /// <summary>
+        /// Gets the length of a playlist
+        /// </summary>
+        /// <param name="playlist"></param>
+        /// <returns>Length of the playlist</returns>
+        private int GetPlaylistLength(int playlist)
+        {
+            return (PlaylistIndices.Length > playlist + 1) ? PlaylistIndices[playlist + 1] : Urls.Length;
+        }
+
+        /// <summary>
         /// Gets the index of the last song on the playlist
         /// </summary>
         /// <param name="playlist"></param>
         /// <returns>Index of the last song on the playlist</returns>
         private int GetLastPlaylistSongIndex(int playlist)
         {
-            return ((PlaylistIndices.Length > playlist + 1) ? PlaylistIndices[playlist + 1] : Urls.Length) - 1;
+            return GetPlaylistLength(playlist) - 1;
         }
 
         /// <summary>
@@ -749,23 +767,25 @@ namespace Varneon.VUdon.MusicPlayer
 
             playlistStartIndex = (PlaylistIndices.Length == 0) ? 0 : PlaylistIndices[selectedPlaylist];
 
-            playlistEndIndex = GetLastPlaylistSongIndex(selectedPlaylist) + 1;
+            playlistEndIndex = GetLastPlaylistSongIndex(selectedPlaylist);
 
-            int songCount = playlistEndIndex - playlistStartIndex;
+            lastPlaylistSongCount = playlistSongCount;
 
-            int itemCount = songContainer.childCount;
+            playlistSongCount = playlistEndIndex - playlistStartIndex + 1;
 
-            for (int i = 0; i < Mathf.Max(songCount, itemCount); i++)
+            for (int i = 0; i < Mathf.Max(playlistSongCount, lastPlaylistSongCount); i++)
             {
                 int songIndex = playlistStartIndex + i;
 
-                if (i >= itemCount)
+                if (i >= lastPlaylistSongCount)
                 {
-                    AddNewListItem(songContainer, songItem);
+                    // If the new playlist is longer than previous, enable the needed number items
+                    songContainer.GetChild(i).gameObject.SetActive(true);
                 }
-                else if (i >= songCount)
+                else if (i >= playlistSongCount)
                 {
-                    Destroy(songContainer.GetChild(i).gameObject);
+                    // If the new playlist is shofter than previous, 
+                    songContainer.GetChild(i).gameObject.SetActive(false);
                     continue;
                 }
 
@@ -782,16 +802,6 @@ namespace Varneon.VUdon.MusicPlayer
             }
 
             GetActiveSongListItems();
-        }
-
-        /// <summary>
-        /// Add abstract list item to any UI list with automatic layout
-        /// </summary>
-        /// <param name="list"></param>
-        /// <param name="item"></param>
-        private void AddNewListItem(RectTransform list, GameObject item)
-        {
-            Instantiate(item, list, false);
         }
 
         /// <summary>
@@ -1460,7 +1470,7 @@ namespace Varneon.VUdon.MusicPlayer
         #region Initialization
 
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
-        private void Initialize()
+        internal void InitializeOnBuild()
         {
             // Cache elements
             lastClickedPlaylistButton = playlistContainer.GetComponentInChildren<Button>();
@@ -1513,58 +1523,21 @@ namespace Varneon.VUdon.MusicPlayer
             // Initialize the highlight color on the playlist playing icon
             playlistItem.transform.GetChild(1).GetComponent<Image>().color = Color.HSVToRGB(contentHighlightHue, 1f, 1f); ;
 
+            // If the player has more than one playlist, first playlist's length is start index of next, otherwise total URL count
+            FirstPlaylistLength = GetPlaylistLength(0);
+
+            // Create the maximum needed amount of song items in the playlist to prevent instantiation during runtime
+            for (int i = 1; i < MaxPlaylistLength; i++)
+            {
+                // Disable all the excess items if the first playlist is shorter than others, reduces load on Start() by having required items active already on build
+                Instantiate(songItem, songContainer, false).SetActive(i < FirstPlaylistLength);
+            }
+
             for (int i = 0; i < PlaylistIndices.Length; i++)
             {
-                if (i > 0) { AddNewListItem(playlistContainer, playlistItem); }
+                if (i > 0) { Instantiate(playlistItem, playlistContainer, false); }
 
                 playlistContainer.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = PlaylistNames[i];
-            }
-        }
-
-        [UsedImplicitly]
-        [UnityEditor.Callbacks.PostProcessScene(-1)]
-        private static void InitializeOnBuild()
-        {
-            foreach (MusicPlayer player in FindObjectsOfType<MusicPlayer>(true))
-            {
-                switch (player.mode)
-                {
-                    case MusicPlayerMode.Unity:
-                        System.Reflection.FieldInfo unityVideoPlayerAudioSourcesField = typeof(VRCUnityVideoPlayer).GetField("targetAudioSources", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
-
-                        player.audioSources = new AudioSource[] { player.unityPlayerAudioSource };
-
-                        unityVideoPlayerAudioSourcesField.SetValue(player.GetComponent<VRCUnityVideoPlayer>(), player.audioSources);
-                        DestroyImmediate(player.GetComponent<VRCAVProVideoPlayer>());
-                        break;
-                    case MusicPlayerMode.AVPro:
-                        System.Reflection.FieldInfo avproSpeakerVideoPlayerField = typeof(VRCAVProVideoSpeaker).GetField("videoPlayer", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
-
-                        VRCAVProVideoPlayer thisAVPro = player.GetComponent<VRCAVProVideoPlayer>();
-
-                        foreach(AudioSource source in player.audioSources)
-                        {
-                            if(source == null) { continue; }
-
-                            if(source.TryGetComponent(out VRCAVProVideoSpeaker avproSpeaker))
-                            {
-                                avproSpeakerVideoPlayerField.SetValue(avproSpeaker, thisAVPro);
-                            }
-                        }
-
-                        DestroyImmediate(player.GetComponent<VRCUnityVideoPlayer>());
-                        break;
-                    default:
-                        Debug.LogError("Unknown MusicPlayerMode!");
-                        break;
-                }
-
-                foreach (GameObject example in player.examplesToDestroyOnBuild)
-                {
-                    DestroyImmediate(example);
-                }
-
-                player.Initialize();
             }
         }
 #endif

@@ -1,16 +1,21 @@
-﻿using System.Collections.Generic;
+﻿using JetBrains.Annotations;
+using System.Collections.Generic;
 using System.Linq;
 using UdonSharpEditor;
 using UnityEditor.Callbacks;
 using UnityEngine;
+using Varneon.VUdon.MusicPlayer.Enums;
+using VRC.SDK3.Video.Components;
+using VRC.SDK3.Video.Components.AVPro;
 using VRC.SDKBase;
 
 namespace Varneon.VUdon.MusicPlayer.Editor
 {
     public static class MusicPlayerBuildPostProcessor
     {
-        [PostProcessScene(-2)]
-        public static void PostProcessMusicPlayers()
+        [UsedImplicitly]
+        [PostProcessScene(-1)]
+        private static void PostProcessMusicPlayers()
         {
             foreach(MusicPlayer musicPlayer in Object.FindObjectsOfType<MusicPlayer>(true))
             {
@@ -64,6 +69,8 @@ namespace Varneon.VUdon.MusicPlayer.Editor
 
                 int currentSongIndex = 0;
 
+                int maxPlaylistLength = 0;
+
                 foreach (SongPlaylist.SongPlaylistData playlist in playlists)
                 {
                     if (playlist.CanAutoplay) { autoplayPlaylistIndices.Add(playlistIndices.Count); }
@@ -79,6 +86,8 @@ namespace Varneon.VUdon.MusicPlayer.Editor
                     playlistDescriptions.Add(playlist.Description);
 
                     currentSongIndex += playlist.Songs.Count;
+
+                    maxPlaylistLength = Mathf.Max(maxPlaylistLength, playlist.Songs.Count);
                 }
 
                 IEnumerable<int> autoplayCopyrightFreePlaylistIndices = autoplayPlaylistIndices.Intersect(copyrightFreePlaylistIndices);
@@ -98,6 +107,7 @@ namespace Varneon.VUdon.MusicPlayer.Editor
                 musicPlayer.AutoplayPlaylistIndices = autoplayPlaylistIndices.ToArray();
                 musicPlayer.CopyrightFreePlaylistIndices = copyrightFreePlaylistIndices.ToArray();
                 musicPlayer.AutoplayCopyrightFreePlaylistIndices = autoplayCopyrightFreePlaylistIndices.ToArray();
+                musicPlayer.MaxPlaylistLength = maxPlaylistLength;
 
                 // If only one playlist is included in build, hide the library window to make more space for song list items
                 if(playlists.Length == 1)
@@ -106,6 +116,45 @@ namespace Varneon.VUdon.MusicPlayer.Editor
                     musicPlayer.mainWindow.sizeDelta = new Vector2(0f, musicPlayer.mainWindow.sizeDelta.y);
                     musicPlayer.mainWindow.anchoredPosition = new Vector2(0f, musicPlayer.mainWindow.anchoredPosition.y);
                 }
+
+                switch (musicPlayer.Mode)
+                {
+                    case MusicPlayerMode.Unity:
+                        System.Reflection.FieldInfo unityVideoPlayerAudioSourcesField = typeof(VRCUnityVideoPlayer).GetField("targetAudioSources", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+
+                        musicPlayer.audioSources = new AudioSource[] { musicPlayer.unityPlayerAudioSource };
+
+                        unityVideoPlayerAudioSourcesField.SetValue(musicPlayer.GetComponent<VRCUnityVideoPlayer>(), musicPlayer.audioSources);
+                        Object.DestroyImmediate(musicPlayer.GetComponent<VRCAVProVideoPlayer>());
+                        break;
+                    case MusicPlayerMode.AVPro:
+                        System.Reflection.FieldInfo avproSpeakerVideoPlayerField = typeof(VRCAVProVideoSpeaker).GetField("videoPlayer", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+
+                        VRCAVProVideoPlayer thisAVPro = musicPlayer.GetComponent<VRCAVProVideoPlayer>();
+
+                        foreach (AudioSource source in musicPlayer.audioSources)
+                        {
+                            if (source == null) { continue; }
+
+                            if (source.TryGetComponent(out VRCAVProVideoSpeaker avproSpeaker))
+                            {
+                                avproSpeakerVideoPlayerField.SetValue(avproSpeaker, thisAVPro);
+                            }
+                        }
+
+                        Object.DestroyImmediate(musicPlayer.GetComponent<VRCUnityVideoPlayer>());
+                        break;
+                    default:
+                        Debug.LogError("Unknown MusicPlayerMode!");
+                        break;
+                }
+
+                foreach (GameObject example in musicPlayer.examplesToDestroyOnBuild)
+                {
+                    Object.DestroyImmediate(example);
+                }
+
+                musicPlayer.InitializeOnBuild();
             }
         }
     }
