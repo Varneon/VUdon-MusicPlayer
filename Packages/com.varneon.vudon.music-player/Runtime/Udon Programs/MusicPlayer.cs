@@ -897,11 +897,11 @@ namespace Varneon.VUdon.MusicPlayer
 
             nextSongPlaylistIndex = GetPlaylistIndexOfSong(nextSongIndex);
 
-            GetActiveSongListItems();
-
             loading = true;
 
             loadingTime = 0f;
+
+            GetActiveSongListItems();
 
             loadingIcon.gameObject.SetActive(true);
 
@@ -1050,7 +1050,7 @@ namespace Varneon.VUdon.MusicPlayer
 
                 loadingSlider = nextSongListItem.GetComponentInChildren<Slider>(true);
 
-                loadingSlider.gameObject.SetActive(true);
+                loadingSlider.gameObject.SetActive(loading);
             }
         }
 
