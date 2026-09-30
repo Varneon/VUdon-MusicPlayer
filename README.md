@@ -11,6 +11,7 @@ A music player prefab that allows world creators to easily create playlists of m
 ## Features
 - A static set of playlists containing URLs to videos that can be played in world
 - Local or synchronized playback
+- Timeline seek
 - Shuffle within playlist or all
 - Loop playlist or single song
 - Disable automatic playback of copyrighted playlists
