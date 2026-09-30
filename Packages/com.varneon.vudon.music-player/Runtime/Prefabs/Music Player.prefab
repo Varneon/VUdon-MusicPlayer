@@ -221,7 +221,7 @@ GameObject:
   - component: {fileID: 6242093716067802693}
   - component: {fileID: 8340049871030787016}
   m_Layer: 0
-  m_Name: TEXT_TAGS
+  m_Name: TEXT_CUSTOM_DATA
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -274,7 +274,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: <TAGS>
+  m_text: <CUSTOM DATA>
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -4528,7 +4528,7 @@ GameObject:
   - component: {fileID: 9219592953702245846}
   - component: {fileID: 7832781507877403448}
   m_Layer: 0
-  m_Name: TEXT_TAGS
+  m_Name: TEXT_CUSTOM_DATA
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4581,7 +4581,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: <TAGS>
+  m_text: <CUSTOM DATA>
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -4932,13 +4932,15 @@ MonoBehaviour:
   allowOwnershipClaimOnStart: 1
   playOnStart: 1
   onlyFirstPlaylistOnStart: 0
+  showCustomDataColumn: 0
+  customDataColumnName: YEAR
   unityPlayerAudioSource: {fileID: 0}
   audioSources:
   - {fileID: 0}
   unlockReferenceEditing: 0
   windowRoot: {fileID: 5094361641437134815}
-  playlists: {fileID: 5094361640000633008}
-  songs: {fileID: 5094361640632525123}
+  playlistContainer: {fileID: 5094361640000633008}
+  songContainer: {fileID: 5094361640632525123}
   playlistItem: {fileID: 5459830173119852168}
   songItem: {fileID: 7873658077401213492}
   errorPrompt: {fileID: 3498113437053061619}
@@ -4977,6 +4979,12 @@ MonoBehaviour:
   windowBackground: {fileID: 8938408310471023923}
   playlistLibraryWindow: {fileID: 5094361640952123817}
   mainWindow: {fileID: 5094361640976706575}
+  titleColumnHeader: {fileID: 1988248385383032962}
+  artistColumnHeader: {fileID: 460816177630030102}
+  customDataColumnHeader: {fileID: 1783292208203744957}
+  itemTitleText: {fileID: 2448852419498468469}
+  itemArtistText: {fileID: 4647426443730213542}
+  itemCustomDataText: {fileID: 7832781507877403448}
   panelColorExampleImages:
   - {fileID: 7263965871906118804}
   - {fileID: 4719725141475327918}
@@ -4989,6 +4997,7 @@ MonoBehaviour:
   examplesToDestroyOnBuild:
   - {fileID: 8865219784516486505}
   - {fileID: 7066824567171226076}
+  logLevel: 0
   logger: {fileID: 0}
   Urls: []
   Titles: []
@@ -5001,6 +5010,25 @@ MonoBehaviour:
   AutoplayPlaylistIndices: 
   CopyrightFreePlaylistIndices: 
   AutoplayCopyrightFreePlaylistIndices: 
+  volumeIconImages: []
+  lastClickedPlaylistButton: {fileID: 0}
+  contentHighlightColor: {r: 0, g: 0, b: 0, a: 0}
+  normalGlassColors:
+    m_NormalColor: {r: 0, g: 0, b: 0, a: 0}
+    m_HighlightedColor: {r: 0, g: 0, b: 0, a: 0}
+    m_PressedColor: {r: 0, g: 0, b: 0, a: 0}
+    m_SelectedColor: {r: 0, g: 0, b: 0, a: 0}
+    m_DisabledColor: {r: 0, g: 0, b: 0, a: 0}
+    m_ColorMultiplier: 0
+    m_FadeDuration: 0
+  highlightedGlassColors:
+    m_NormalColor: {r: 0, g: 0, b: 0, a: 0}
+    m_HighlightedColor: {r: 0, g: 0, b: 0, a: 0}
+    m_PressedColor: {r: 0, g: 0, b: 0, a: 0}
+    m_SelectedColor: {r: 0, g: 0, b: 0, a: 0}
+    m_DisabledColor: {r: 0, g: 0, b: 0, a: 0}
+    m_ColorMultiplier: 0
+    m_FadeDuration: 0
 --- !u!114 &467907086465180340
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12053,7 +12081,7 @@ GameObject:
   - component: {fileID: 2536949801267780253}
   - component: {fileID: 1783292208203744957}
   m_Layer: 0
-  m_Name: TEXT_TAGS
+  m_Name: TEXT_CUSTOM_DATA
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12106,7 +12134,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: TAGS
+  m_text: CUSTOM DATA
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

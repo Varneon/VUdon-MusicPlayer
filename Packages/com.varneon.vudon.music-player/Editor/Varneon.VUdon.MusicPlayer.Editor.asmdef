@@ -8,7 +8,8 @@
         "Varneon.VUdon.Editors.Runtime",
         "Varneon.VUdon.Editors.Editor",
         "Varneon.VUdon.Logger.Runtime",
-        "VRC.Udon"
+        "VRC.Udon",
+        "Unity.TextMeshPro"
     ],
     "includePlatforms": [
         "Editor"

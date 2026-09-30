@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Text;
 using UnityEditor;
 using UnityEngine;
 using static Varneon.VUdon.MusicPlayer.SongPlaylist;
@@ -109,13 +110,15 @@ namespace Varneon.VUdon.MusicPlayer.Editor
                 {
                     if (showReorderingTools) { GUILayout.Space(84); }
 
-                    GUILayout.Label("Title");
+                    float columnWidth = (EditorGUIUtility.currentViewWidth - (showReorderingTools ? 84f : 0f) - 80f) / 4f;
 
-                    GUILayout.Label("Artist");
+                    GUILayout.Label("Title", GUILayout.Width(columnWidth));
 
-                    GUILayout.Label("URL");
+                    GUILayout.Label("Artist", GUILayout.Width(columnWidth));
 
-                    GUILayout.Space(28);
+                    GUILayout.Label("URL", GUILayout.Width(columnWidth));
+
+                    GUILayout.Label("Custom Data");
                 }
 
                 int songCount = songPlaylistData.Songs.Count;
@@ -184,6 +187,8 @@ namespace Varneon.VUdon.MusicPlayer.Editor
 
                                 song.URL = EditorGUILayout.TextField(song.URL);
 
+                                song.CustomData = EditorGUILayout.TextField(song.CustomData);
+
                                 if (scope.changed)
                                 {
                                     songPlaylistData.Songs[i] = song;
@@ -231,6 +236,8 @@ namespace Varneon.VUdon.MusicPlayer.Editor
                         menu.AddItem(new GUIContent("Copy raw JSON", "Copies the raw JSON to your clipboard"), false, () => EditorGUIUtility.systemCopyBuffer = songPlaylist.RawJsonData);
 
                         menu.AddItem(new GUIContent("Copy raw JSON with code block formatting", "Copies the raw JSON to your clipboard with code block formatting (useful for displaying data in e.g. Discord, Markdown, etc.)"), false, () => EditorGUIUtility.systemCopyBuffer = string.Format("```json\n{0}\n```", songPlaylist.RawJsonData));
+
+                        menu.AddItem(new GUIContent("Copy raw TSV", "Copies the raw TSV to your clipboard"), false, () => CopyAsTSVToClipboard());
 
                         menu.ShowAsContext();
                     }
@@ -388,6 +395,20 @@ namespace Varneon.VUdon.MusicPlayer.Editor
             }
 
             AssetDatabase.Refresh();
+        }
+
+        private void CopyAsTSVToClipboard()
+        {
+            StringBuilder builder = new StringBuilder();
+
+            builder.AppendLine("Title\tArtist\tURL\tCustom Data");
+
+            foreach(Song song in songPlaylistData.Songs)
+            {
+                builder.AppendLine(string.Join('\t', song.Title, song.Artist, song.URL, song.CustomData ?? string.Empty));
+            }
+
+            EditorGUIUtility.systemCopyBuffer = builder.ToString();
         }
     }
 }
